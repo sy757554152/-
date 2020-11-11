@@ -4,6 +4,7 @@ import menu from './id-ID/menu';
 import pwa from './id-ID/pwa';
 import settingDrawer from './id-ID/settingDrawer';
 import settings from './id-ID/settings';
+
 export default {
   'navbar.lang': 'Bahasa',
   'layout.user.link.help': 'Bantuan',
