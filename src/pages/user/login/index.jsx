@@ -1,17 +1,8 @@
-import {
-  AlipayCircleOutlined,
-  LockTwoTone,
-  MailTwoTone,
-  MobileTwoTone,
-  TaobaoCircleOutlined,
-  UserOutlined,
-  WeiboCircleOutlined,
-} from '@ant-design/icons';
-import { Alert, Space, message, Tabs } from 'antd';
-import React, { useState } from 'react';
-import ProForm, { ProFormCaptcha, ProFormCheckbox, ProFormText } from '@ant-design/pro-form';
+import { LockTwoTone, UserOutlined } from '@ant-design/icons';
+import { Alert } from 'antd';
+import React from 'react';
+import ProForm, { ProFormCheckbox, ProFormText } from '@ant-design/pro-form';
 import { connect, useIntl, FormattedMessage } from 'umi';
-import { getFakeCaptcha } from '@/services/login';
 import styles from './index.less';
 
 const LoginMessage = ({ content }) => (
@@ -27,15 +18,14 @@ const LoginMessage = ({ content }) => (
 
 const Login = (props) => {
   const { userLogin = {}, submitting } = props;
-  const { status, type: loginType } = userLogin;
-  const [type, setType] = useState('account');
+  const { status } = userLogin;
   const intl = useIntl();
 
   const handleSubmit = (values) => {
     const { dispatch } = props;
     dispatch({
       type: 'login/login',
-      payload: { ...values, type },
+      payload: { ...values },
     });
   };
 
@@ -43,7 +33,7 @@ const Login = (props) => {
     <div className={styles.main}>
       <ProForm
         initialValues={{
-          autoLogin: true,
+          autoLogin: false,
         }}
         submitter={{
           render: (_, dom) => dom.pop(),
@@ -59,24 +49,7 @@ const Login = (props) => {
           handleSubmit(values);
         }}
       >
-        <Tabs activeKey={type} onChange={setType}>
-          <Tabs.TabPane
-            key="account"
-            tab={intl.formatMessage({
-              id: 'pages.login.accountLogin.tab',
-              defaultMessage: '账户密码登录',
-            })}
-          />
-          <Tabs.TabPane
-            key="mobile"
-            tab={intl.formatMessage({
-              id: 'pages.login.phoneLogin.tab',
-              defaultMessage: '手机号登录',
-            })}
-          />
-        </Tabs>
-
-        {status === 'error' && loginType === 'account' && !submitting && (
+        {status === 'error' && !submitting && (
           <LoginMessage
             content={intl.formatMessage({
               id: 'pages.login.accountLogin.errorMessage',
@@ -84,138 +57,50 @@ const Login = (props) => {
             })}
           />
         )}
-        {type === 'account' && (
-          <>
-            <ProFormText
-              name="userName"
-              fieldProps={{
-                size: 'large',
-                prefix: <UserOutlined className={styles.prefixIcon} />,
-              }}
-              placeholder={intl.formatMessage({
-                id: 'pages.login.username.placeholder',
-                defaultMessage: '用户名: admin or user',
-              })}
-              rules={[
-                {
-                  required: true,
-                  message: (
-                    <FormattedMessage
-                      id="pages.login.username.required"
-                      defaultMessage="请输入用户名!"
-                    />
-                  ),
-                },
-              ]}
-            />
-            <ProFormText.Password
-              name="password"
-              fieldProps={{
-                size: 'large',
-                prefix: <LockTwoTone className={styles.prefixIcon} />,
-              }}
-              placeholder={intl.formatMessage({
-                id: 'pages.login.password.placeholder',
-                defaultMessage: '密码: ant.design',
-              })}
-              rules={[
-                {
-                  required: true,
-                  message: (
-                    <FormattedMessage
-                      id="pages.login.password.required"
-                      defaultMessage="请输入密码！"
-                    />
-                  ),
-                },
-              ]}
-            />
-          </>
-        )}
-
-        {status === 'error' && loginType === 'mobile' && !submitting && (
-          <LoginMessage content="验证码错误" />
-        )}
-        {type === 'mobile' && (
-          <>
-            <ProFormText
-              fieldProps={{
-                size: 'large',
-                prefix: <MobileTwoTone className={styles.prefixIcon} />,
-              }}
-              name="mobile"
-              placeholder={intl.formatMessage({
-                id: 'pages.login.phoneNumber.placeholder',
-                defaultMessage: '手机号',
-              })}
-              rules={[
-                {
-                  required: true,
-                  message: (
-                    <FormattedMessage
-                      id="pages.login.phoneNumber.required"
-                      defaultMessage="请输入手机号！"
-                    />
-                  ),
-                },
-                {
-                  pattern: /^1\d{10}$/,
-                  message: (
-                    <FormattedMessage
-                      id="pages.login.phoneNumber.invalid"
-                      defaultMessage="手机号格式错误！"
-                    />
-                  ),
-                },
-              ]}
-            />
-            <ProFormCaptcha
-              fieldProps={{
-                size: 'large',
-                prefix: <MailTwoTone className={styles.prefixIcon} />,
-              }}
-              captchaProps={{
-                size: 'large',
-              }}
-              placeholder={intl.formatMessage({
-                id: 'pages.login.captcha.placeholder',
-                defaultMessage: '请输入验证码',
-              })}
-              captchaTextRender={(timing, count) =>
-                timing
-                  ? `${count} ${intl.formatMessage({
-                      id: 'pages.getCaptchaSecondText',
-                      defaultMessage: '获取验证码',
-                    })}`
-                  : intl.formatMessage({
-                      id: 'pages.login.phoneLogin.getVerificationCode',
-                      defaultMessage: '获取验证码',
-                    })
-              }
-              name="captcha"
-              rules={[
-                {
-                  required: true,
-                  message: (
-                    <FormattedMessage
-                      id="pages.login.captcha.required"
-                      defaultMessage="请输入验证码！"
-                    />
-                  ),
-                },
-              ]}
-              onGetCaptcha={async (mobile) => {
-                const result = await getFakeCaptcha(mobile);
-
-                if (result === false) {
-                  return;
-                }
-
-                message.success('获取验证码成功！验证码为：1234');
-              }}
-            />
-          </>
-        )}
+        <ProFormText
+          name="userName"
+          fieldProps={{
+            size: 'large',
+            prefix: <UserOutlined className={styles.prefixIcon} />,
+          }}
+          placeholder={intl.formatMessage({
+            id: 'pages.login.username.placeholder',
+            defaultMessage: '用户名: admin or user',
+          })}
+          rules={[
+            {
+              required: true,
+              message: (
+                <FormattedMessage
+                  id="pages.login.username.required"
+                  defaultMessage="请输入用户名!"
+                />
+              ),
+            },
+          ]}
+        />
+        <ProFormText.Password
+          name="password"
+          fieldProps={{
+            size: 'large',
+            prefix: <LockTwoTone className={styles.prefixIcon} />,
+          }}
+          placeholder={intl.formatMessage({
+            id: 'pages.login.password.placeholder',
+            defaultMessage: '密码: ant.design',
+          })}
+          rules={[
+            {
+              required: true,
+              message: (
+                <FormattedMessage
+                  id="pages.login.password.required"
+                  defaultMessage="请输入密码！"
+                />
+              ),
+            },
+          ]}
+        />
         <div
           style={{
             marginBottom: 24,
@@ -224,21 +109,8 @@ const Login = (props) => {
           <ProFormCheckbox noStyle name="autoLogin">
             <FormattedMessage id="pages.login.rememberMe" defaultMessage="自动登录" />
           </ProFormCheckbox>
-          <a
-            style={{
-              float: 'right',
-            }}
-          >
-            <FormattedMessage id="pages.login.forgotPassword" defaultMessage="忘记密码" />
-          </a>
         </div>
       </ProForm>
-      <Space className={styles.other}>
-        <FormattedMessage id="pages.login.loginWith" defaultMessage="其他登录方式" />
-        <AlipayCircleOutlined className={styles.icon} />
-        <TaobaoCircleOutlined className={styles.icon} />
-        <WeiboCircleOutlined className={styles.icon} />
-      </Space>
     </div>
   );
 };

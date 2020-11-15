@@ -38,7 +38,6 @@ const Model = {
             return;
           }
         }
-
         history.replace(redirect || '/');
       }
     },
