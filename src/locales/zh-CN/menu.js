@@ -1,5 +1,8 @@
 export default {
   'menu.welcome': '欢迎',
+  'menu.staff': '账号管理',
+  'menu.staff.addManager': '添加账号',
+  'menu.staff.allManager': '账号信息',
   'menu.more-blocks': '更多区块',
   'menu.home': '首页',
   'menu.admin': '管理页',

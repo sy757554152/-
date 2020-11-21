@@ -45,11 +45,33 @@ export default [
               },
             ],
           },
+          // {
+          //   name: 'list.table-list',
+          //   icon: 'table',
+          //   path: '/list',
+          //   component: './ListTableList',
+          // },
           {
-            name: 'list.table-list',
+            name: 'staff',
             icon: 'table',
-            path: '/list',
-            component: './ListTableList',
+            path: '/staffManagement',
+            authority: ['admin'],
+            routes: [
+              {
+                path: '/staffManagement/addManager',
+                name: 'addManager',
+                icon: 'smile',
+                component: './staffManagement/addManager',
+                authority: ['admin'],
+              },
+              {
+                path: '/staffManagement/allManager',
+                name: 'allManager',
+                icon: 'smile',
+                component: './staffManagement/allManager',
+                authority: ['admin'],
+              },
+            ],
           },
           {
             component: './404',

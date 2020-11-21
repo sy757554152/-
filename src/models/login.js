@@ -3,6 +3,7 @@ import { history } from 'umi';
 import { fakeAccountLogin } from '@/services/login';
 import { setAuthority } from '@/utils/authority';
 import { getPageQuery } from '@/utils/utils';
+import { setToken, removeToken } from '@/utils/cookie';
 import { message } from 'antd';
 
 const Model = {
@@ -17,7 +18,10 @@ const Model = {
         type: 'changeLoginStatus',
         payload: response,
       }); // Login successfully
-
+      const { userdata } = response;
+      const { id, name } = userdata;
+      setToken('token', id);
+      setToken('userName', name);
       if (response.status === 'ok') {
         const urlParams = new URL(window.location.href);
         const params = getPageQuery();
@@ -46,6 +50,8 @@ const Model = {
       const { redirect } = getPageQuery(); // Note: There may be security issues, please note
 
       if (window.location.pathname !== '/user/login' && !redirect) {
+        removeToken('token');
+        removeToken('userName');
         history.replace({
           pathname: '/user/login',
           search: stringify({
@@ -58,7 +64,7 @@ const Model = {
   reducers: {
     changeLoginStatus(state, { payload }) {
       setAuthority(payload.currentAuthority);
-      return { ...state, status: payload.status, type: payload.type };
+      return { ...state, status: payload.status, type: payload.type, userData: payload.userdata };
     },
   },
 };
