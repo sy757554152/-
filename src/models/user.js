@@ -1,4 +1,13 @@
-import { queryCurrent, query as queryUsers, addManager, searchManager } from '@/services/user';
+import {
+  queryCurrent,
+  query as queryUsers,
+  addManager,
+  searchManager,
+  getAllManager,
+  DeleManager,
+  changePassword as changePass,
+  checkPassword,
+} from '@/services/user';
 import { getToken } from '@/utils/cookie';
 import { message } from 'antd';
 import { history } from 'umi';
@@ -7,7 +16,7 @@ const UserModel = {
   namespace: 'user',
   state: {
     currentUser: {},
-    ManagerList: [],
+    managerList: [],
   },
   effects: {
     *fetch(_, { call, put }) {
@@ -52,12 +61,84 @@ const UserModel = {
         message.error('用户id重复，请重新输入！');
       }
     },
+
+    *getAllUser({ payload }, { call, put }) {
+      const { currentUser: UserData = {} } = payload;
+      const id = getToken('token');
+      const { userid = id } = UserData;
+      const response = yield call(getAllManager, { userid });
+      const { data = [], status } = response;
+      if (status === 'ok') {
+        data.filter((val, index) => {
+          const value = val;
+          const key = index + 1;
+          value.key = key.toString();
+          return value;
+        });
+        yield put({
+          type: 'saveAllUser',
+          payload: data,
+        });
+      } else {
+        message.error('获取信息错误，请刷新重试');
+      }
+    },
+
+    *deleManager({ payload }, { call, put }) {
+      const { value = {} } = payload;
+      const response = yield call(DeleManager, value);
+      const { status } = response;
+      if (status === 'ok') {
+        const userid = getToken('token');
+        const res = yield call(getAllManager, { userid });
+        const { data = [], status: sign } = res;
+        if (sign === 'ok') {
+          data.filter((val, index) => {
+            const arrData = val;
+            const key = index + 1;
+            arrData.key = key.toString();
+            return arrData;
+          });
+          yield put({
+            type: 'saveAllUser',
+            payload: data,
+          });
+          message.success('删除成功！');
+        } else {
+          message.error('获取信息错误，请刷新重试');
+        }
+      } else {
+        message.error('删除错误，请重试');
+      }
+    },
+
+    *changePassword({ payload }, { call }) {
+      const { userid, newPassword, oldPassword } = payload;
+      const response = yield call(checkPassword, { userid, oldPassword });
+      const { status } = response;
+      if (status === 'ok') {
+        const res = yield call(changePass, { userid, newPassword });
+        const { status: sign } = res;
+        if (sign === 'ok') {
+          message.success('修改成功！');
+          setTimeout(() => {
+            history.push('/welcome');
+          }, 3000);
+        } else {
+          message.error('修改失败，请重试！');
+        }
+      } else {
+        message.error('旧密码错误，请重试');
+      }
+    },
   },
   reducers: {
     saveCurrentUser(state, action) {
       return { ...state, currentUser: action.payload || {} };
     },
-
+    saveAllUser(state, action) {
+      return { ...state, managerList: action.payload || [] };
+    },
     changeNotifyCount(
       state = {
         currentUser: {},

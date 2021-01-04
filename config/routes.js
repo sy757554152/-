@@ -74,6 +74,12 @@ export default [
             ],
           },
           {
+            path: '/changePassword',
+            name: 'changePassword',
+            icon: 'smile',
+            component: './changePassword/index',
+          },
+          {
             component: './404',
           },
         ],

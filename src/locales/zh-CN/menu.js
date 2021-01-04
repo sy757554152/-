@@ -3,6 +3,7 @@ export default {
   'menu.staff': '账号管理',
   'menu.staff.addManager': '添加账号',
   'menu.staff.allManager': '账号信息',
+  'menu.changePassword': '修改密码',
   'menu.more-blocks': '更多区块',
   'menu.home': '首页',
   'menu.admin': '管理页',

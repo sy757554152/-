@@ -1,7 +1,7 @@
 import { LockTwoTone, UserOutlined } from '@ant-design/icons';
 import { Alert } from 'antd';
 import React from 'react';
-import ProForm, { ProFormCheckbox, ProFormText } from '@ant-design/pro-form';
+import ProForm, { ProFormText } from '@ant-design/pro-form';
 import { connect, useIntl, FormattedMessage } from 'umi';
 import styles from './index.less';
 
@@ -101,15 +101,6 @@ const Login = (props) => {
             },
           ]}
         />
-        <div
-          style={{
-            marginBottom: 24,
-          }}
-        >
-          <ProFormCheckbox noStyle name="autoLogin">
-            <FormattedMessage id="pages.login.rememberMe" defaultMessage="自动登录" />
-          </ProFormCheckbox>
-        </div>
       </ProForm>
     </div>
   );
