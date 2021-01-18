@@ -80,6 +80,44 @@ export default [
             component: './changePassword/index',
           },
           {
+            path: '/type',
+            name: 'type',
+            icon: 'smile',
+            routes: [
+              {
+                path: '/type/picture',
+                name: 'photo',
+                icon: 'smile',
+                component: './type/photo',
+              },
+              {
+                path: '/type/video',
+                name: 'video',
+                icon: 'smile',
+                component: './type/video',
+              },
+            ],
+          },
+          {
+            path: '/getForm',
+            name: 'getForm',
+            icon: 'smile',
+            routes: [
+              {
+                path: '/getForm/call',
+                name: 'call',
+                icon: 'smile',
+                component: './getForm/call',
+              },
+              {
+                path: '/getForm/called',
+                name: 'called',
+                icon: 'smile',
+                component: './getForm/called',
+              },
+            ],
+          },
+          {
             component: './404',
           },
         ],
