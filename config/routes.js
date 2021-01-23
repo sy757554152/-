@@ -118,6 +118,27 @@ export default [
             ],
           },
           {
+            path: '/innerStaff',
+            name: 'innerStaff',
+            icon: 'smile',
+            routes: [
+              {
+                path: '/innerStaff/addStaff',
+                name: 'addStaff',
+                icon: 'smile',
+                component: './innerStaff/addStaff',
+                authority: ['admin'],
+              },
+              {
+                path: '/innerStaff/getStaff',
+                name: 'getStaff',
+                icon: 'smile',
+                component: './innerStaff/getStaff',
+                authority: ['admin'],
+              },
+            ],
+          },
+          {
             component: './404',
           },
         ],
