@@ -19,3 +19,10 @@ export async function deleStaff(params) {
     data: params,
   });
 }
+
+export async function addStaffPic(params) {
+  return request('/api/staff/addStaffPic', {
+    method: 'POST',
+    data: params,
+  });
+}

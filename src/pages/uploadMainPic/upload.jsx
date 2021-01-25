@@ -1,12 +1,9 @@
 import React, { Component } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
 import { connect } from 'umi';
-import { Form, Input, Select, Button, Upload, message } from 'antd';
+import { Form, Input, Button, Upload, message } from 'antd';
 import moment from 'moment';
 import { UploadOutlined } from '@ant-design/icons';
-
-const { TextArea } = Input;
-const { Option } = Select;
 
 const tailFormItemLayout = {
   wrapperCol: {
@@ -32,41 +29,34 @@ const formItemLayout = {
   },
 };
 
-class InnerStaff extends Component {
+class UploadMainPic extends Component {
   constructor(...args) {
     super(...args);
-
     this.onFinish = this.onFinish.bind(this);
 
     this.state = {
       fileList: [],
-      uploading: false,
     };
   }
 
   onFinish(values) {
     const { fileList } = this.state;
     const { dispatch } = this.props;
-    const staffId = moment().format('YYYYMMDDHHmmss');
-    const { name, sex, information } = values;
-    const [file] = fileList;
+    const graphId = moment().format('YYYYMMDDHHmmss');
+    const { jumpUrl } = values;
     const fs = new FormData();
-    this.setState({
-      uploading: true,
-    });
-    fs.append('staffId', staffId);
-    fs.append('staffName', name);
-    fs.append('sex', sex);
-    fs.append('information', information);
+    const file = fileList[0];
     fs.append('file', file);
+    fs.append('graphId', graphId);
+    fs.append('jumpUrl', jumpUrl);
     dispatch({
-      type: 'staff/addStaff',
+      type: 'mainPic/addMainPic',
       payload: fs,
     });
   }
 
   render() {
-    const { fileList, uploading } = this.state;
+    const { fileList } = this.state;
     const props = {
       onRemove: (file) => {
         this.setState((state) => {
@@ -83,8 +73,8 @@ class InnerStaff extends Component {
         if (!isJpgOrPng) {
           message.error('You can only upload JPG/PNG file!');
         } else {
-          this.setState((state) => ({
-            fileList: [...state.fileList, file],
+          this.setState(() => ({
+            fileList: [file],
           }));
         }
         return false;
@@ -95,45 +85,24 @@ class InnerStaff extends Component {
       <PageContainer>
         <Form {...formItemLayout} name="register" onFinish={this.onFinish} scrollToFirstError>
           <Form.Item
-            name="name"
-            label="姓名"
-            rules={[{ required: true, message: '请输入姓名', whitespace: true }]}
+            name="jumpUrl"
+            label="跳转地址"
+            rules={[{ required: true, message: '请输入跳转地址', whitespace: true }]}
           >
             <Input />
           </Form.Item>
-
-          <Form.Item name="sex" label="性别" rules={[{ required: true, message: '请选择性别' }]}>
-            <Select>
-              <Option value="男">男</Option>
-              <Option value="女">女</Option>
-            </Select>
-          </Form.Item>
-
-          <Form.Item
-            name="information"
-            label="个人简介"
-            rules={[{ required: true, message: '请输入个人简介' }]}
-          >
-            <TextArea showCount maxLength={250} />
-          </Form.Item>
-
           <Form.Item
             name="avatar"
-            label="员工头像"
-            rules={[{ required: true, message: '请上传员工头像' }]}
+            label="上传主页照片"
+            rules={[{ required: true, message: '请选择上传主页照片' }]}
           >
             <Upload {...props}>
-              <Button icon={<UploadOutlined />}>上传头像</Button>
+              <Button icon={<UploadOutlined />}>上传主页照片</Button>
             </Upload>
           </Form.Item>
 
           <Form.Item {...tailFormItemLayout}>
-            <Button
-              type="primary"
-              htmlType="submit"
-              loading={uploading}
-              disabled={fileList.length !== 1}
-            >
+            <Button type="primary" htmlType="submit" disabled={fileList.length !== 1}>
               提交
             </Button>
           </Form.Item>
@@ -143,8 +112,8 @@ class InnerStaff extends Component {
   }
 }
 
-export default connect(({ login, loading, staff }) => ({
+export default connect(({ login, loading, mainPic }) => ({
   userLogin: login,
   loading,
-  staff,
-}))(InnerStaff);
+  mainPic,
+}))(UploadMainPic);

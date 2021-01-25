@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
 import { connect } from 'umi';
-import { Form, Input, Select, Button, Upload, message } from 'antd';
+import { Form, Select, Button, Upload, message } from 'antd';
 import moment from 'moment';
 import { UploadOutlined } from '@ant-design/icons';
 
-const { TextArea } = Input;
 const { Option } = Select;
 
 const tailFormItemLayout = {
@@ -32,41 +31,51 @@ const formItemLayout = {
   },
 };
 
-class InnerStaff extends Component {
+class UploadStaffPic extends Component {
   constructor(...args) {
     super(...args);
 
+    this.getAllStaff = this.getAllStaff.bind(this);
     this.onFinish = this.onFinish.bind(this);
 
     this.state = {
       fileList: [],
-      uploading: false,
     };
+  }
+
+  componentDidMount() {
+    this.getAllStaff();
   }
 
   onFinish(values) {
     const { fileList } = this.state;
     const { dispatch } = this.props;
-    const staffId = moment().format('YYYYMMDDHHmmss');
-    const { name, sex, information } = values;
-    const [file] = fileList;
+    const staffPicId = moment().format('YYYYMMDDHHmmss');
+    const { staffId } = values;
+    const staffPid = staffId;
     const fs = new FormData();
-    this.setState({
-      uploading: true,
+    fileList.forEach((file, index) => {
+      fs.append(`file${index}`, file);
     });
-    fs.append('staffId', staffId);
-    fs.append('staffName', name);
-    fs.append('sex', sex);
-    fs.append('information', information);
-    fs.append('file', file);
+    fs.append('staffPicId', staffPicId);
+    fs.append('staffPid', staffPid);
     dispatch({
-      type: 'staff/addStaff',
+      type: 'staff/addStaffPic',
       payload: fs,
     });
   }
 
+  getAllStaff() {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'staff/getStaff',
+    });
+  }
+
   render() {
-    const { fileList, uploading } = this.state;
+    const { fileList } = this.state;
+    const { staff = {} } = this.props;
+    const { staffList = [] } = staff;
     const props = {
       onRemove: (file) => {
         this.setState((state) => {
@@ -87,53 +96,41 @@ class InnerStaff extends Component {
             fileList: [...state.fileList, file],
           }));
         }
+
         return false;
       },
       fileList,
     };
+
     return (
       <PageContainer>
         <Form {...formItemLayout} name="register" onFinish={this.onFinish} scrollToFirstError>
           <Form.Item
-            name="name"
-            label="姓名"
-            rules={[{ required: true, message: '请输入姓名', whitespace: true }]}
+            name="staffId"
+            label="员工姓名"
+            rules={[{ required: true, message: '请选择对应摄影师姓名' }]}
           >
-            <Input />
-          </Form.Item>
-
-          <Form.Item name="sex" label="性别" rules={[{ required: true, message: '请选择性别' }]}>
             <Select>
-              <Option value="男">男</Option>
-              <Option value="女">女</Option>
+              {staffList.map((item, idx) => (
+                <Option key={idx} value={item.staffId}>
+                  {item.staffName}
+                </Option>
+              ))}
             </Select>
           </Form.Item>
 
           <Form.Item
-            name="information"
-            label="个人简介"
-            rules={[{ required: true, message: '请输入个人简介' }]}
-          >
-            <TextArea showCount maxLength={250} />
-          </Form.Item>
-
-          <Form.Item
             name="avatar"
-            label="员工头像"
-            rules={[{ required: true, message: '请上传员工头像' }]}
+            label="员工上传照片"
+            rules={[{ required: true, message: '请选择上传照片' }]}
           >
-            <Upload {...props}>
-              <Button icon={<UploadOutlined />}>上传头像</Button>
+            <Upload {...props} multiple>
+              <Button icon={<UploadOutlined />}>上传照片</Button>
             </Upload>
           </Form.Item>
 
           <Form.Item {...tailFormItemLayout}>
-            <Button
-              type="primary"
-              htmlType="submit"
-              loading={uploading}
-              disabled={fileList.length !== 1}
-            >
+            <Button type="primary" htmlType="submit" disabled={fileList.length <= 0}>
               提交
             </Button>
           </Form.Item>
@@ -147,4 +144,4 @@ export default connect(({ login, loading, staff }) => ({
   userLogin: login,
   loading,
   staff,
-}))(InnerStaff);
+}))(UploadStaffPic);

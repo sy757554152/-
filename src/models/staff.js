@@ -1,4 +1,9 @@
-import { addStaff as add, getStaff as getAllStaff, deleStaff as dele } from '@/services/staff';
+import {
+  addStaff as add,
+  getStaff as getAllStaff,
+  deleStaff as dele,
+  addStaffPic as addPic,
+} from '@/services/staff';
 import { message } from 'antd';
 import { history } from 'umi';
 
@@ -10,6 +15,19 @@ const StaffModel = {
   effects: {
     *addStaff({ payload }, { call }) {
       const response = yield call(add, payload);
+      const { status } = response;
+      if (status === 'ok') {
+        message.success('录入成功！');
+        setTimeout(() => {
+          history.go(0);
+        }, 1000);
+      } else {
+        message.error('录入数据错误，请重试！');
+      }
+    },
+
+    *addStaffPic({ payload }, { call }) {
+      const response = yield call(addPic, payload);
       const { status } = response;
       if (status === 'ok') {
         message.success('录入成功！');
@@ -40,7 +58,6 @@ const StaffModel = {
       if (status === 'ok') {
         const res = yield call(getAllStaff);
         const { data = [], status: sign } = res;
-        console.log(res);
         if (sign === 'ok') {
           yield put({
             type: 'saveStaffList',

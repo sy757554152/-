@@ -30,28 +30,6 @@ export default [
             component: './Welcome',
           },
           {
-            path: '/admin',
-            name: 'admin',
-            icon: 'crown',
-            component: './Admin',
-            authority: ['admin'],
-            routes: [
-              {
-                path: '/admin/sub-page',
-                name: 'sub-page',
-                icon: 'smile',
-                component: './Welcome',
-                authority: ['admin'],
-              },
-            ],
-          },
-          // {
-          //   name: 'list.table-list',
-          //   icon: 'table',
-          //   path: '/list',
-          //   component: './ListTableList',
-          // },
-          {
             name: 'staff',
             icon: 'table',
             path: '/staffManagement',
@@ -135,6 +113,120 @@ export default [
                 icon: 'smile',
                 component: './innerStaff/getStaff',
                 authority: ['admin'],
+              },
+            ],
+          },
+          {
+            path: '/uploadStaffPic',
+            name: 'uploadStaffPic',
+            icon: 'smile',
+            routes: [
+              {
+                path: '/uploadStaffPic/upload',
+                name: 'upload',
+                icon: 'smile',
+                component: './uploadStaffPic/upload',
+              },
+              {
+                path: '/uploadStaffPic/manage',
+                name: 'manage',
+                icon: 'smile',
+                component: './uploadStaffPic/manage',
+              },
+            ],
+          },
+          {
+            path: '/uploadMainPic',
+            name: 'uploadMainPic',
+            icon: 'smile',
+            routes: [
+              {
+                path: '/uploadMainPic/upload',
+                name: 'upload',
+                icon: 'smile',
+                component: './uploadMainPic/upload',
+              },
+              {
+                path: '/uploadMainPic/manage',
+                name: 'manage',
+                icon: 'smile',
+                component: './uploadMainPic/manage',
+              },
+            ],
+          },
+          {
+            path: '/environment',
+            name: 'environment',
+            icon: 'smile',
+            routes: [
+              {
+                path: '/environment/upload',
+                name: 'upload',
+                icon: 'smile',
+                component: './environment/upload',
+              },
+              {
+                path: '/environment/manage',
+                name: 'manage',
+                icon: 'smile',
+                component: './environment/manage',
+              },
+            ],
+          },
+          {
+            path: '/sample',
+            name: 'sample',
+            icon: 'smile',
+            routes: [
+              {
+                path: '/sample/upload',
+                name: 'upload',
+                icon: 'smile',
+                component: './sample/upload',
+              },
+              {
+                path: '/sample/manage',
+                name: 'manage',
+                icon: 'smile',
+                component: './sample/manage',
+              },
+            ],
+          },
+          {
+            path: '/guest',
+            name: 'guest',
+            icon: 'smile',
+            routes: [
+              {
+                path: '/guest/upload',
+                name: 'upload',
+                icon: 'smile',
+                component: './guest/upload',
+              },
+              {
+                path: '/guest/manage',
+                name: 'manage',
+                icon: 'smile',
+                component: './guest/manage',
+              },
+            ],
+          },
+          {
+            path: '/video',
+            name: 'video',
+            icon: 'smile',
+            routes: [
+              {
+                path: '/video/upload',
+                name: 'upload',
+                icon: 'smile',
+                component: './video/upload',
+              },
+              {
+                path: '/video/manage',
+                name: 'manage',
+                icon: 'smile',
+                component: './video/manage',
               },
             ],
           },
