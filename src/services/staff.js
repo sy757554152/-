@@ -26,3 +26,16 @@ export async function addStaffPic(params) {
     data: params,
   });
 }
+
+export async function getStaffPic() {
+  return request('/api/staff/getStaffPic', {
+    method: 'GET',
+  });
+}
+
+export async function deleStaffPic(params) {
+  return request('/api/staff/deleStaffPic', {
+    method: 'POST',
+    data: params,
+  });
+}

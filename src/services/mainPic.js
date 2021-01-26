@@ -6,3 +6,16 @@ export async function addMainPic(params) {
     data: params,
   });
 }
+
+export async function getMainPic() {
+  return request('/api/mainpic/getMainPic', {
+    method: 'GET',
+  });
+}
+
+export async function deleMainPic(params) {
+  return request('/api/mainpic/deleMainPic', {
+    method: 'POST',
+    data: params,
+  });
+}

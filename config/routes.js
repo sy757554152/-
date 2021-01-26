@@ -99,6 +99,7 @@ export default [
             path: '/innerStaff',
             name: 'innerStaff',
             icon: 'smile',
+            authority: ['admin'],
             routes: [
               {
                 path: '/innerStaff/addStaff',

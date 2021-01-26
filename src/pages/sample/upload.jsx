@@ -169,9 +169,10 @@ class UploadSample extends Component {
   }
 }
 
-export default connect(({ login, loading, staff, type }) => ({
+export default connect(({ login, loading, sample, type, staff }) => ({
   userLogin: login,
   loading,
-  staff,
+  sample,
   type,
+  staff,
 }))(UploadSample);

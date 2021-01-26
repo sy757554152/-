@@ -1,4 +1,4 @@
-import { addVideo as add } from '@/services/video';
+import { addVideo as add, getVideo as get, deleVideo as dele } from '@/services/video';
 import { message } from 'antd';
 import { history } from 'umi';
 
@@ -18,6 +18,40 @@ const VideoModel = {
         }, 1000);
       } else {
         message.error('录入数据错误，请重试！');
+      }
+    },
+
+    *getVideo(_, { call, put }) {
+      const response = yield call(get);
+      const { status, data } = response;
+      if (status === 'ok') {
+        yield put({
+          type: 'saveVideoModel',
+          payload: data,
+        });
+      } else {
+        message.error('获取数据错误，请刷新重试！');
+      }
+    },
+
+    *deleVideo({ payload }, { call, put }) {
+      const { value = {} } = payload;
+      const response = yield call(dele, value);
+      const { status } = response;
+      if (status === 'ok') {
+        const res = yield call(get);
+        const { data = [], status: sign } = res;
+        if (sign === 'ok') {
+          yield put({
+            type: 'saveVideoModel',
+            payload: data,
+          });
+          message.success('删除成功！');
+        } else {
+          message.error('获取信息错误，请刷新重试');
+        }
+      } else {
+        message.error('删除错误，请重试');
       }
     },
   },

@@ -3,6 +3,8 @@ import {
   getStaff as getAllStaff,
   deleStaff as dele,
   addStaffPic as addPic,
+  getStaffPic as getPic,
+  deleStaffPic as delePic,
 } from '@/services/staff';
 import { message } from 'antd';
 import { history } from 'umi';
@@ -11,6 +13,7 @@ const StaffModel = {
   namespace: 'staff',
   state: {
     staffList: [],
+    staffPicList: [],
   },
   effects: {
     *addStaff({ payload }, { call }) {
@@ -71,11 +74,48 @@ const StaffModel = {
         message.error('删除错误，请重试');
       }
     },
+
+    *getStaffPic(_, { call, put }) {
+      const response = yield call(getPic);
+      const { status, data } = response;
+      if (status === 'ok') {
+        yield put({
+          type: 'saveStaffPicList',
+          payload: data,
+        });
+      } else {
+        message.error('获取数据错误，请刷新重试！');
+      }
+    },
+
+    *deleStaffPic({ payload }, { call, put }) {
+      const { value = {} } = payload;
+      const response = yield call(delePic, value);
+      const { status } = response;
+      if (status === 'ok') {
+        const res = yield call(getPic);
+        const { data = [], status: sign } = res;
+        if (sign === 'ok') {
+          yield put({
+            type: 'saveStaffPicList',
+            payload: data,
+          });
+          message.success('删除成功！');
+        } else {
+          message.error('获取信息错误，请刷新重试');
+        }
+      } else {
+        message.error('删除错误，请重试');
+      }
+    },
   },
 
   reducers: {
     saveStaffList(state, action) {
       return { ...state, staffList: action.payload || [] };
+    },
+    saveStaffPicList(state, action) {
+      return { ...state, staffPicList: action.payload || [] };
     },
   },
 };

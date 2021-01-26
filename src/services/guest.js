@@ -6,3 +6,16 @@ export async function addGuest(params) {
     data: params,
   });
 }
+
+export async function getGuest() {
+  return request('/api/guest/getGuest', {
+    method: 'GET',
+  });
+}
+
+export async function deleGuest(params) {
+  return request('/api/guest/deleGuest', {
+    method: 'POST',
+    data: params,
+  });
+}
