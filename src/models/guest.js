@@ -14,7 +14,7 @@ const GuestModel = {
       if (status === 'ok') {
         message.success('录入成功！');
         setTimeout(() => {
-          history.go(0);
+          history.push('/guest/manage');
         }, 1000);
       } else {
         message.error('录入数据错误，请重试！');
@@ -25,6 +25,12 @@ const GuestModel = {
       const response = yield call(getPic);
       const { status, data } = response;
       if (status === 'ok') {
+        data.filter((val, index) => {
+          const arrData = val;
+          const key = index + 1;
+          arrData.key = key.toString();
+          return arrData;
+        });
         yield put({
           type: 'saveGuestModel',
           payload: data,
@@ -42,6 +48,12 @@ const GuestModel = {
         const res = yield call(getPic);
         const { data = [], status: sign } = res;
         if (sign === 'ok') {
+          data.filter((val, index) => {
+            const arrData = val;
+            const key = index + 1;
+            arrData.key = key.toString();
+            return arrData;
+          });
           yield put({
             type: 'saveGuestModel',
             payload: data,

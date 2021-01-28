@@ -45,8 +45,8 @@ class ManageStaffPic extends Component {
 
     this.columns = [
       {
-        title: '图片Id',
-        dataIndex: 'staffPicId',
+        title: '图片序号',
+        dataIndex: 'key',
       },
       {
         title: '员工Id',

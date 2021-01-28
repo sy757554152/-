@@ -14,7 +14,7 @@ const VideoModel = {
       if (status === 'ok') {
         message.success('录入成功！');
         setTimeout(() => {
-          history.go(0);
+          history.push('/video/manage');
         }, 1000);
       } else {
         message.error('录入数据错误，请重试！');
@@ -25,6 +25,12 @@ const VideoModel = {
       const response = yield call(get);
       const { status, data } = response;
       if (status === 'ok') {
+        data.filter((val, index) => {
+          const arrData = val;
+          const key = index + 1;
+          arrData.key = key.toString();
+          return arrData;
+        });
         yield put({
           type: 'saveVideoModel',
           payload: data,
@@ -42,6 +48,12 @@ const VideoModel = {
         const res = yield call(get);
         const { data = [], status: sign } = res;
         if (sign === 'ok') {
+          data.filter((val, index) => {
+            const arrData = val;
+            const key = index + 1;
+            arrData.key = key.toString();
+            return arrData;
+          });
           yield put({
             type: 'saveVideoModel',
             payload: data,

@@ -45,8 +45,8 @@ class GetStaff extends Component {
 
     this.columns = [
       {
-        title: '员工id',
-        dataIndex: 'staffId',
+        title: '员工序号',
+        dataIndex: 'key',
       },
       {
         title: '员工姓名',

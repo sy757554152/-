@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
 import { connect } from 'umi';
-import { Form, Select, Button, Upload } from 'antd';
+import { Form, Select, Button, Upload, Spin } from 'antd';
 import moment from 'moment';
 import { UploadOutlined } from '@ant-design/icons';
 
@@ -41,6 +41,7 @@ class UploadVideo extends Component {
 
     this.state = {
       fileList: [],
+      loading: false,
     };
   }
 
@@ -63,6 +64,7 @@ class UploadVideo extends Component {
     fs.append('type', type);
     fs.append('videoId', videoId);
     fs.append('date', date);
+    this.setState({ loading: true });
     dispatch({
       type: 'video/addVideo',
       payload: fs,
@@ -113,51 +115,53 @@ class UploadVideo extends Component {
 
     return (
       <PageContainer>
-        <Form {...formItemLayout} name="register" onFinish={this.onFinish} scrollToFirstError>
-          <Form.Item
-            name="staffId"
-            label="摄影师姓名"
-            rules={[{ required: true, message: '请选择对应摄影师姓名' }]}
-          >
-            <Select>
-              {staffList.map((item, idx) => (
-                <Option key={idx} value={item.staffId}>
-                  {item.staffName}
-                </Option>
-              ))}
-            </Select>
-          </Form.Item>
+        <Spin spinning={this.state.loading}>
+          <Form {...formItemLayout} name="register" onFinish={this.onFinish} scrollToFirstError>
+            <Form.Item
+              name="staffId"
+              label="摄影师姓名"
+              rules={[{ required: true, message: '请选择对应摄影师姓名' }]}
+            >
+              <Select>
+                {staffList.map((item, idx) => (
+                  <Option key={idx} value={item.staffId}>
+                    {item.staffName}
+                  </Option>
+                ))}
+              </Select>
+            </Form.Item>
 
-          <Form.Item
-            name="type"
-            label="视频类型"
-            rules={[{ required: true, message: '请选择对应视频类型' }]}
-          >
-            <Select>
-              {videoType.map((item, idx) => (
-                <Option key={idx} value={item.typeId}>
-                  {item.typeName}
-                </Option>
-              ))}
-            </Select>
-          </Form.Item>
+            <Form.Item
+              name="type"
+              label="视频类型"
+              rules={[{ required: true, message: '请选择对应视频类型' }]}
+            >
+              <Select>
+                {videoType.map((item, idx) => (
+                  <Option key={idx} value={item.typeId}>
+                    {item.typeName}
+                  </Option>
+                ))}
+              </Select>
+            </Form.Item>
 
-          <Form.Item
-            name="avatar"
-            label="上传视频"
-            rules={[{ required: true, message: '请选择上传视频' }]}
-          >
-            <Upload {...props} multiple>
-              <Button icon={<UploadOutlined />}>上传视频</Button>
-            </Upload>
-          </Form.Item>
+            <Form.Item
+              name="avatar"
+              label="上传视频"
+              rules={[{ required: true, message: '请选择上传视频' }]}
+            >
+              <Upload {...props} multiple>
+                <Button icon={<UploadOutlined />}>上传视频</Button>
+              </Upload>
+            </Form.Item>
 
-          <Form.Item {...tailFormItemLayout}>
-            <Button type="primary" htmlType="submit" disabled={fileList.length <= 0}>
-              提交
-            </Button>
-          </Form.Item>
-        </Form>
+            <Form.Item {...tailFormItemLayout}>
+              <Button type="primary" htmlType="submit" disabled={fileList.length <= 0}>
+                提交
+              </Button>
+            </Form.Item>
+          </Form>
+        </Spin>
       </PageContainer>
     );
   }

@@ -45,8 +45,8 @@ class ManageSample extends Component {
 
     this.columns = [
       {
-        title: '图片Id',
-        dataIndex: 'sampleId',
+        title: '图片序号',
+        dataIndex: 'key',
       },
       {
         title: '图片类型',

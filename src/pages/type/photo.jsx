@@ -92,9 +92,9 @@ class PhotoType extends Component {
 
     this.columns = [
       {
-        title: '类型id',
-        dataIndex: 'typeId',
-        key: 'typeId',
+        title: '类型序号',
+        dataIndex: 'key',
+        key: 'key',
       },
       {
         title: '类型名称',

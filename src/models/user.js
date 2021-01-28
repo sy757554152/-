@@ -52,7 +52,7 @@ const UserModel = {
         if (userStatus === 'ok') {
           message.success('添加成功！');
           setTimeout(() => {
-            history.push('/welcome');
+            history.push('/staffManagement/allManager');
           }, 3000);
         } else {
           message.error('添加错误，请重试');

@@ -13,3 +13,10 @@ export async function getForm(params) {
     params,
   });
 }
+
+export async function searchForm(params) {
+  return request('/api/form/searchForm', {
+    method: 'GET',
+    params,
+  });
+}

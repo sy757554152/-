@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
 import { connect } from 'umi';
-import { Form, Input, Button, Upload, message } from 'antd';
+import { Form, Input, Button, Upload, message, Spin } from 'antd';
 import moment from 'moment';
 import { UploadOutlined } from '@ant-design/icons';
 
@@ -36,6 +36,7 @@ class UploadMainPic extends Component {
 
     this.state = {
       fileList: [],
+      loading: false,
     };
   }
 
@@ -49,6 +50,9 @@ class UploadMainPic extends Component {
     fs.append('file', file);
     fs.append('graphId', graphId);
     fs.append('jumpUrl', jumpUrl);
+    this.setState({
+      loading: true,
+    });
     dispatch({
       type: 'mainPic/addMainPic',
       payload: fs,
@@ -56,7 +60,7 @@ class UploadMainPic extends Component {
   }
 
   render() {
-    const { fileList } = this.state;
+    const { fileList, loading } = this.state;
     const props = {
       onRemove: (file) => {
         this.setState((state) => {
@@ -83,30 +87,32 @@ class UploadMainPic extends Component {
     };
     return (
       <PageContainer>
-        <Form {...formItemLayout} name="register" onFinish={this.onFinish} scrollToFirstError>
-          <Form.Item
-            name="jumpUrl"
-            label="跳转地址"
-            rules={[{ required: true, message: '请输入跳转地址', whitespace: true }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="avatar"
-            label="上传主页照片"
-            rules={[{ required: true, message: '请选择上传主页照片' }]}
-          >
-            <Upload {...props}>
-              <Button icon={<UploadOutlined />}>上传主页照片</Button>
-            </Upload>
-          </Form.Item>
+        <Spin spinning={loading}>
+          <Form {...formItemLayout} name="register" onFinish={this.onFinish} scrollToFirstError>
+            <Form.Item
+              name="jumpUrl"
+              label="跳转地址"
+              rules={[{ required: true, message: '请输入跳转地址', whitespace: true }]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              name="avatar"
+              label="上传主页照片"
+              rules={[{ required: true, message: '请选择上传主页照片' }]}
+            >
+              <Upload {...props}>
+                <Button icon={<UploadOutlined />}>上传主页照片</Button>
+              </Upload>
+            </Form.Item>
 
-          <Form.Item {...tailFormItemLayout}>
-            <Button type="primary" htmlType="submit" disabled={fileList.length !== 1}>
-              提交
-            </Button>
-          </Form.Item>
-        </Form>
+            <Form.Item {...tailFormItemLayout}>
+              <Button type="primary" htmlType="submit" disabled={fileList.length !== 1}>
+                提交
+              </Button>
+            </Form.Item>
+          </Form>
+        </Spin>
       </PageContainer>
     );
   }

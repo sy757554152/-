@@ -43,6 +43,11 @@ class StaffManagemanet extends Component {
     this.getAllManager = this.getAllManager.bind(this);
     this.columns = [
       {
+        title: '用户序号',
+        dataIndex: 'key',
+        key: 'key',
+      },
+      {
         title: '姓名',
         dataIndex: 'managerName',
         key: 'managerName',

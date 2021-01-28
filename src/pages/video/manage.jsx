@@ -45,8 +45,8 @@ class ManageVideo extends Component {
 
     this.columns = [
       {
-        title: '视频Id',
-        dataIndex: 'videoId',
+        title: '视频序号',
+        dataIndex: 'key',
       },
       {
         title: '视频类型',

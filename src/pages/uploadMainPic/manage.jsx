@@ -45,8 +45,8 @@ class ManageMainPic extends Component {
 
     this.columns = [
       {
-        title: '图片Id',
-        dataIndex: 'graphId',
+        title: '图片序号',
+        dataIndex: 'key',
       },
       {
         title: '跳转链接',

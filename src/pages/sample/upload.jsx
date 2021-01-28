@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
 import { connect } from 'umi';
-import { Form, Select, Button, Upload, message } from 'antd';
+import { Form, Select, Button, Upload, message, Spin } from 'antd';
 import moment from 'moment';
 import { UploadOutlined } from '@ant-design/icons';
 
@@ -41,6 +41,7 @@ class UploadSample extends Component {
 
     this.state = {
       fileList: [],
+      loading: false,
     };
   }
 
@@ -63,6 +64,9 @@ class UploadSample extends Component {
     fs.append('type', type);
     fs.append('sampleId', sampleId);
     fs.append('date', date);
+    this.setState({
+      loading: true,
+    });
     dispatch({
       type: 'sample/addSample',
       payload: fs,
@@ -87,7 +91,7 @@ class UploadSample extends Component {
   }
 
   render() {
-    const { fileList } = this.state;
+    const { fileList, loading } = this.state;
     const { staff = {}, type = {} } = this.props;
     const { staffList = [] } = staff;
     const { pictureType = [] } = type;
@@ -119,51 +123,53 @@ class UploadSample extends Component {
 
     return (
       <PageContainer>
-        <Form {...formItemLayout} name="register" onFinish={this.onFinish} scrollToFirstError>
-          <Form.Item
-            name="staffId"
-            label="摄影师姓名"
-            rules={[{ required: true, message: '请选择对应摄影师姓名' }]}
-          >
-            <Select>
-              {staffList.map((item, idx) => (
-                <Option key={idx} value={item.staffId}>
-                  {item.staffName}
-                </Option>
-              ))}
-            </Select>
-          </Form.Item>
+        <Spin spinning={loading}>
+          <Form {...formItemLayout} name="register" onFinish={this.onFinish} scrollToFirstError>
+            <Form.Item
+              name="staffId"
+              label="摄影师姓名"
+              rules={[{ required: true, message: '请选择对应摄影师姓名' }]}
+            >
+              <Select>
+                {staffList.map((item, idx) => (
+                  <Option key={idx} value={item.staffId}>
+                    {item.staffName}
+                  </Option>
+                ))}
+              </Select>
+            </Form.Item>
 
-          <Form.Item
-            name="type"
-            label="图片类型"
-            rules={[{ required: true, message: '请选择对应图片类型' }]}
-          >
-            <Select>
-              {pictureType.map((item, idx) => (
-                <Option key={idx} value={item.typeId}>
-                  {item.typeName}
-                </Option>
-              ))}
-            </Select>
-          </Form.Item>
+            <Form.Item
+              name="type"
+              label="图片类型"
+              rules={[{ required: true, message: '请选择对应图片类型' }]}
+            >
+              <Select>
+                {pictureType.map((item, idx) => (
+                  <Option key={idx} value={item.typeId}>
+                    {item.typeName}
+                  </Option>
+                ))}
+              </Select>
+            </Form.Item>
 
-          <Form.Item
-            name="avatar"
-            label="上传样片照片"
-            rules={[{ required: true, message: '请选择上传照片' }]}
-          >
-            <Upload {...props} multiple>
-              <Button icon={<UploadOutlined />}>上传样片照片</Button>
-            </Upload>
-          </Form.Item>
+            <Form.Item
+              name="avatar"
+              label="上传样片照片"
+              rules={[{ required: true, message: '请选择上传照片' }]}
+            >
+              <Upload {...props} multiple>
+                <Button icon={<UploadOutlined />}>上传样片照片</Button>
+              </Upload>
+            </Form.Item>
 
-          <Form.Item {...tailFormItemLayout}>
-            <Button type="primary" htmlType="submit" disabled={fileList.length <= 0}>
-              提交
-            </Button>
-          </Form.Item>
-        </Form>
+            <Form.Item {...tailFormItemLayout}>
+              <Button type="primary" htmlType="submit" disabled={fileList.length <= 0}>
+                提交
+              </Button>
+            </Form.Item>
+          </Form>
+        </Spin>
       </PageContainer>
     );
   }

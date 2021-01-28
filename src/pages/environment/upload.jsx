@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
 import { connect } from 'umi';
-import { Form, Button, Upload, message } from 'antd';
+import { Form, Button, Upload, message, Spin } from 'antd';
 import moment from 'moment';
 import { UploadOutlined } from '@ant-design/icons';
 
@@ -36,6 +36,7 @@ class UploadEnvironment extends Component {
 
     this.state = {
       fileList: [],
+      loading: false,
     };
   }
 
@@ -47,6 +48,9 @@ class UploadEnvironment extends Component {
     const file = fileList[0];
     fs.append('file', file);
     fs.append('graphId', graphId);
+    this.setState({
+      loading: true,
+    });
     dispatch({
       type: 'environment/addEnvironment',
       payload: fs,
@@ -54,7 +58,7 @@ class UploadEnvironment extends Component {
   }
 
   render() {
-    const { fileList } = this.state;
+    const { fileList, loading } = this.state;
     const props = {
       onRemove: (file) => {
         this.setState((state) => {
@@ -81,23 +85,25 @@ class UploadEnvironment extends Component {
     };
     return (
       <PageContainer>
-        <Form {...formItemLayout} name="register" onFinish={this.onFinish} scrollToFirstError>
-          <Form.Item
-            name="avatar"
-            label="上传门店环境照片"
-            rules={[{ required: true, message: '请选择上传门店环境照片' }]}
-          >
-            <Upload {...props}>
-              <Button icon={<UploadOutlined />}>上传门店环境照片</Button>
-            </Upload>
-          </Form.Item>
+        <Spin spinning={loading}>
+          <Form {...formItemLayout} name="register" onFinish={this.onFinish} scrollToFirstError>
+            <Form.Item
+              name="avatar"
+              label="上传门店环境照片"
+              rules={[{ required: true, message: '请选择上传门店环境照片' }]}
+            >
+              <Upload {...props}>
+                <Button icon={<UploadOutlined />}>上传门店环境照片</Button>
+              </Upload>
+            </Form.Item>
 
-          <Form.Item {...tailFormItemLayout}>
-            <Button type="primary" htmlType="submit" disabled={fileList.length !== 1}>
-              提交
-            </Button>
-          </Form.Item>
-        </Form>
+            <Form.Item {...tailFormItemLayout}>
+              <Button type="primary" htmlType="submit" disabled={fileList.length !== 1}>
+                提交
+              </Button>
+            </Form.Item>
+          </Form>
+        </Spin>
       </PageContainer>
     );
   }
