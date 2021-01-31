@@ -1,9 +1,18 @@
 import React, { Component } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
 import { connect } from 'umi';
-import { Form, Button, Upload, message, Spin } from 'antd';
+import { Form, Button, Upload, message, Spin, Modal } from 'antd';
 import moment from 'moment';
-import { UploadOutlined } from '@ant-design/icons';
+import { PlusOutlined } from '@ant-design/icons';
+
+function getBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = (error) => reject(error);
+  });
+}
 
 const tailFormItemLayout = {
   wrapperCol: {
@@ -33,10 +42,16 @@ class UploadEnvironment extends Component {
   constructor(...args) {
     super(...args);
     this.onFinish = this.onFinish.bind(this);
+    this.handleCancel = this.handleCancel.bind(this);
+    this.handlePreview = this.handlePreview.bind(this);
+    this.handleChange = this.handleChange.bind(this);
 
     this.state = {
       fileList: [],
       loading: false,
+      previewVisible: false,
+      previewImage: '',
+      previewTitle: '',
     };
   }
 
@@ -46,7 +61,8 @@ class UploadEnvironment extends Component {
     const graphId = moment().format('YYYYMMDDHHmmss');
     const fs = new FormData();
     const file = fileList[0];
-    fs.append('file', file);
+    const { originFileObj } = file;
+    fs.append('file', originFileObj);
     fs.append('graphId', graphId);
     this.setState({
       loading: true,
@@ -57,8 +73,36 @@ class UploadEnvironment extends Component {
     });
   }
 
+  handleCancel() {
+    this.setState({
+      previewVisible: false,
+    });
+  }
+
+  handleChange({ fileList }) {
+    this.setState({ fileList });
+  }
+
+  async handlePreview(file) {
+    if (!file.url && !file.preview) {
+      // eslint-disable-next-line no-param-reassign
+      file.preview = await getBase64(file.originFileObj);
+    }
+    this.setState({
+      previewImage: file.url || file.preview,
+      previewVisible: true,
+      previewTitle: file.name || file.url.substring(file.url.lastIndexOf('/') + 1),
+    });
+  }
+
   render() {
-    const { fileList, loading } = this.state;
+    const { fileList, loading, previewVisible, previewImage, previewTitle } = this.state;
+    const uploadButton = (
+      <div>
+        <PlusOutlined />
+        <div style={{ marginTop: 8 }}>Upload</div>
+      </div>
+    );
     const props = {
       onRemove: (file) => {
         this.setState((state) => {
@@ -90,11 +134,25 @@ class UploadEnvironment extends Component {
             <Form.Item
               name="avatar"
               label="上传门店环境照片"
-              rules={[{ required: true, message: '请选择上传门店环境照片' }]}
+              // rules={[{ required: true, message: '请选择上传门店环境照片' }]}
             >
-              <Upload {...props}>
-                <Button icon={<UploadOutlined />}>上传门店环境照片</Button>
+              <Upload
+                {...props}
+                name="avatar"
+                listType="picture-card"
+                onPreview={this.handlePreview}
+                onChange={this.handleChange}
+              >
+                {uploadButton}
               </Upload>
+              <Modal
+                visible={previewVisible}
+                title={previewTitle}
+                footer={null}
+                onCancel={this.handleCancel}
+              >
+                <img alt="example" style={{ width: '100%' }} src={previewImage} />
+              </Modal>
             </Form.Item>
 
             <Form.Item {...tailFormItemLayout}>

@@ -1,9 +1,18 @@
 import React, { Component } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
 import { connect } from 'umi';
-import { Form, Select, Button, Upload, message, Input, Spin } from 'antd';
+import { Form, Select, Button, Upload, message, Input, Spin, Modal } from 'antd';
 import moment from 'moment';
-import { UploadOutlined } from '@ant-design/icons';
+import { PlusOutlined } from '@ant-design/icons';
+
+function getBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = (error) => reject(error);
+  });
+}
 
 const { Option } = Select;
 
@@ -38,10 +47,16 @@ class UploadGuest extends Component {
     this.getAllStaff = this.getAllStaff.bind(this);
     this.onFinish = this.onFinish.bind(this);
     this.getPicType = this.getPicType.bind(this);
+    this.handleCancel = this.handleCancel.bind(this);
+    this.handlePreview = this.handlePreview.bind(this);
+    this.handleChange = this.handleChange.bind(this);
 
     this.state = {
       fileList: [],
       loading: false,
+      previewVisible: false,
+      previewImage: '',
+      previewTitle: '',
     };
   }
 
@@ -58,7 +73,8 @@ class UploadGuest extends Component {
     const { staffId, type, guestName } = values;
     const fs = new FormData();
     fileList.forEach((file, index) => {
-      fs.append(`file${index}`, file);
+      const { originFileObj } = file;
+      fs.append(`file${index}`, originFileObj);
     });
     fs.append('staffId', staffId);
     fs.append('type', type);
@@ -91,11 +107,39 @@ class UploadGuest extends Component {
     });
   }
 
+  handleCancel() {
+    this.setState({
+      previewVisible: false,
+    });
+  }
+
+  handleChange({ fileList }) {
+    this.setState({ fileList });
+  }
+
+  async handlePreview(file) {
+    if (!file.url && !file.preview) {
+      // eslint-disable-next-line no-param-reassign
+      file.preview = await getBase64(file.originFileObj);
+    }
+    this.setState({
+      previewImage: file.url || file.preview,
+      previewVisible: true,
+      previewTitle: file.name || file.url.substring(file.url.lastIndexOf('/') + 1),
+    });
+  }
+
   render() {
-    const { fileList, loading } = this.state;
+    const { fileList, loading, previewVisible, previewImage, previewTitle } = this.state;
     const { staff = {}, type = {} } = this.props;
     const { staffList = [] } = staff;
     const { pictureType = [] } = type;
+    const uploadButton = (
+      <div>
+        <PlusOutlined />
+        <div style={{ marginTop: 8 }}>Upload</div>
+      </div>
+    );
     const props = {
       onRemove: (file) => {
         this.setState((state) => {
@@ -165,11 +209,26 @@ class UploadGuest extends Component {
             <Form.Item
               name="avatar"
               label="上传样片照片"
-              rules={[{ required: true, message: '请选择上传照片' }]}
+              // rules={[{ required: true, message: '请选择上传照片' }]}
             >
-              <Upload {...props} multiple>
-                <Button icon={<UploadOutlined />}>上传样片照片</Button>
+              <Upload
+                {...props}
+                multiple
+                name="avatar"
+                listType="picture-card"
+                onPreview={this.handlePreview}
+                onChange={this.handleChange}
+              >
+                {uploadButton}
               </Upload>
+              <Modal
+                visible={previewVisible}
+                title={previewTitle}
+                footer={null}
+                onCancel={this.handleCancel}
+              >
+                <img alt="example" style={{ width: '100%' }} src={previewImage} />
+              </Modal>
             </Form.Item>
 
             <Form.Item {...tailFormItemLayout}>
