@@ -37,7 +37,7 @@ export default defineConfig({
   // proxy: proxy[REACT_APP_ENV || 'dev'],
   proxy: {
     '/api': {
-      target: 'http://localhost:3000/',
+      target: 'http://120.55.87.56/',
       changeOrigin: true,
       pathRewrite: { '^/api': '' },
     },

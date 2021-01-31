@@ -137,7 +137,7 @@ class UploadGuest extends Component {
     const uploadButton = (
       <div>
         <PlusOutlined />
-        <div style={{ marginTop: 8 }}>Upload</div>
+        <div style={{ marginTop: 8 }}>上传客片</div>
       </div>
     );
     const props = {
@@ -208,7 +208,7 @@ class UploadGuest extends Component {
 
             <Form.Item
               name="avatar"
-              label="上传样片照片"
+              label="上传客片照片"
               // rules={[{ required: true, message: '请选择上传照片' }]}
             >
               <Upload

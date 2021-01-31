@@ -107,7 +107,7 @@ class InnerStaff extends Component {
     const uploadButton = (
       <div>
         <PlusOutlined />
-        <div style={{ marginTop: 8 }}>Upload</div>
+        <div style={{ marginTop: 8 }}>请上传员工头像</div>
       </div>
     );
     const props = {

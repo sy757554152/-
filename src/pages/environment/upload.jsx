@@ -100,7 +100,7 @@ class UploadEnvironment extends Component {
     const uploadButton = (
       <div>
         <PlusOutlined />
-        <div style={{ marginTop: 8 }}>Upload</div>
+        <div style={{ marginTop: 8 }}>上传门店环境照片</div>
       </div>
     );
     const props = {

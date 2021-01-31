@@ -121,7 +121,7 @@ class UploadStaffPic extends Component {
     const uploadButton = (
       <div>
         <PlusOutlined />
-        <div style={{ marginTop: 8 }}>Upload</div>
+        <div style={{ marginTop: 8 }}>上传照片</div>
       </div>
     );
     const props = {
