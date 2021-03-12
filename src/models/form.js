@@ -1,6 +1,5 @@
 import { getForm as getData, deleForm as dele, searchForm as search } from '@/services/form';
 import { message } from 'antd';
-import { history } from 'umi';
 
 const FormModel = {
   namespace: 'form',
@@ -36,15 +35,29 @@ const FormModel = {
       }
     },
 
-    *deleForm({ payload }, { call }) {
+    *deleForm({ payload }, { call, put }) {
       const { value } = payload;
       const response = yield call(dele, { value });
-      const { status } = response;
-      if (status === 'ok') {
-        message.success('删除成功！');
-        setTimeout(() => {
-          history.go(0);
-        }, 1000);
+      const { status: sign } = response;
+      if (sign === 'ok') {
+        const type = 'false';
+        const res = yield call(getData, { type });
+        const { status, data = [] } = res;
+        if (status === 'ok') {
+          data.filter((val, index) => {
+            const arrData = val;
+            const key = index + 1;
+            arrData.key = key.toString();
+            return arrData;
+          });
+          yield put({
+            type: 'saveCallList',
+            payload: data,
+          });
+          message.success('删除成功！');
+        } else {
+          message.error('获取数据失败，请刷新页面重试！');
+        }
       } else {
         message.error('删除数据错误，请重试！');
       }

@@ -11,7 +11,6 @@ import { Result, Button } from 'antd';
 import Authorized from '@/utils/Authorized';
 import RightContent from '@/components/GlobalHeader/RightContent';
 import { getMatchMenu } from '@umijs/route-utils';
-import logo from '../assets/logo.svg';
 
 const noMatch = (
   <Result
@@ -104,7 +103,7 @@ const BasicLayout = (props) => {
   const { formatMessage } = useIntl();
   return (
     <ProLayout
-      logo={logo}
+      logo="http://loopsy.top/maiqi.png"
       formatMessage={formatMessage}
       {...props}
       {...settings}

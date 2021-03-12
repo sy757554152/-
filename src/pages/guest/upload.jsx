@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
 import { connect } from 'umi';
-import { Form, Select, Button, Upload, message, Input, Spin, Modal } from 'antd';
+import { Form, Select, Button, Upload, message, Spin, Modal } from 'antd';
 import moment from 'moment';
 import { PlusOutlined } from '@ant-design/icons';
 
@@ -50,6 +50,7 @@ class UploadGuest extends Component {
     this.handleCancel = this.handleCancel.bind(this);
     this.handlePreview = this.handlePreview.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.getUser = this.getUser.bind(this);
 
     this.state = {
       fileList: [],
@@ -63,6 +64,7 @@ class UploadGuest extends Component {
   componentDidMount() {
     this.getAllStaff();
     this.getPicType();
+    this.getUser();
   }
 
   onFinish(values) {
@@ -70,7 +72,7 @@ class UploadGuest extends Component {
     const { dispatch } = this.props;
     const guestId = moment().format('YYYYMMDDHHmmss');
     const date = moment().format('YYYYMMDD');
-    const { staffId, type, guestName } = values;
+    const { staffId, type, userId } = values;
     const fs = new FormData();
     fileList.forEach((file, index) => {
       const { originFileObj } = file;
@@ -79,14 +81,17 @@ class UploadGuest extends Component {
     fs.append('staffId', staffId);
     fs.append('type', type);
     fs.append('guestId', guestId);
-    fs.append('guestName', guestName);
+    fs.append('userId', userId);
     fs.append('date', date);
     this.setState({
       loading: true,
     });
     dispatch({
       type: 'guest/addGuest',
-      payload: fs,
+      payload: {
+        fs,
+        userId,
+      },
     });
   }
 
@@ -104,6 +109,13 @@ class UploadGuest extends Component {
       payload: {
         type: 'picture',
       },
+    });
+  }
+
+  getUser() {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'guest/getUser',
     });
   }
 
@@ -131,9 +143,14 @@ class UploadGuest extends Component {
 
   render() {
     const { fileList, loading, previewVisible, previewImage, previewTitle } = this.state;
-    const { staff = {}, type = {} } = this.props;
+    const { staff = {}, type = {}, guest, history } = this.props;
     const { staffList = [] } = staff;
     const { pictureType = [] } = type;
+    const { userList = [] } = guest;
+    const { location = {} } = history;
+    const { query = {} } = location;
+    const { value = {} } = query;
+    const { userId = '' } = value;
     const uploadButton = (
       <div>
         <PlusOutlined />
@@ -169,13 +186,25 @@ class UploadGuest extends Component {
     return (
       <PageContainer>
         <Spin spinning={loading}>
-          <Form {...formItemLayout} name="register" onFinish={this.onFinish} scrollToFirstError>
+          <Form
+            {...formItemLayout}
+            initialValues={{ userId }}
+            name="register"
+            onFinish={this.onFinish}
+            scrollToFirstError
+          >
             <Form.Item
-              name="guestName"
+              name="userId"
               label="客户姓名"
               rules={[{ required: true, message: '请填写客户姓名' }]}
             >
-              <Input />
+              <Select>
+                {userList.map((item, idx) => (
+                  <Option key={idx} value={item.userId}>
+                    {item.userName}
+                  </Option>
+                ))}
+              </Select>
             </Form.Item>
 
             <Form.Item
@@ -243,9 +272,10 @@ class UploadGuest extends Component {
   }
 }
 
-export default connect(({ login, loading, staff, type }) => ({
+export default connect(({ login, loading, staff, type, guest }) => ({
   userLogin: login,
   loading,
   staff,
   type,
+  guest,
 }))(UploadGuest);

@@ -27,14 +27,29 @@ export async function addStaffPic(params) {
   });
 }
 
-export async function getStaffPic() {
+export async function getStaffPic(params) {
   return request('/api/staff/getStaffPic', {
     method: 'GET',
+    params,
   });
 }
 
 export async function deleStaffPic(params) {
   return request('/api/staff/deleStaffPic', {
+    method: 'POST',
+    data: params,
+  });
+}
+
+export async function changeStaff(params) {
+  return request('/api/staff/changeStaff', {
+    method: 'POST',
+    data: params,
+  });
+}
+
+export async function changeStaffPic(params) {
+  return request('/api/staff/changeStaffPic', {
     method: 'POST',
     data: params,
   });

@@ -3,6 +3,7 @@ import React from 'react';
 import { connect } from 'umi';
 import Avatar from './AvatarDropdown';
 import styles from './index.less';
+import Date from './Date';
 
 const ENVTagColor = {
   dev: 'orange',
@@ -20,6 +21,7 @@ const GlobalHeaderRight = (props) => {
 
   return (
     <div className={className}>
+      <Date />
       <Avatar />
       {REACT_APP_ENV && (
         <span>

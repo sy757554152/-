@@ -58,12 +58,20 @@ const RegistrationForm = (props) => {
 
       <Form.Item
         name="newPassword"
-        label="密码"
+        label="新密码"
         rules={[
           {
             required: true,
-            message: '请输入密码',
+            message: '请在此输入密码',
           },
+          ({ getFieldValue }) => ({
+            validator(rule, value) {
+              if (!value || getFieldValue('oldPassword') !== value) {
+                return Promise.resolve();
+              }
+              return Promise.reject(new Error('新密码与旧密码输入一直，请重新修改新密码!'));
+            },
+          }),
         ]}
         hasFeedback
       >

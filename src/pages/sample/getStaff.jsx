@@ -1,41 +1,7 @@
-import React, { Component, useState } from 'react';
+import React, { Component } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
 import { connect, history } from 'umi';
-import { Table, Space, Button, Modal } from 'antd';
-
-const Delemodel = (props) => {
-  const [isModalVisible, setIsModalVisible] = useState(false);
-
-  const showModal = () => {
-    setIsModalVisible(true);
-  };
-
-  const handleOk = () => {
-    const { dispatch, staff = {}, valueIndex } = props;
-    const { staffList = [] } = staff;
-    const value = staffList[valueIndex];
-    dispatch({
-      type: 'staff/deleStaff',
-      payload: { value },
-    });
-    setIsModalVisible(false);
-  };
-
-  const handleCancel = () => {
-    setIsModalVisible(false);
-  };
-
-  return (
-    <>
-      <Button type="primary" shape="round" danger onClick={showModal}>
-        删除
-      </Button>
-      <Modal title="删除提示" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
-        <p>是否删除该员工信息？</p>
-      </Modal>
-    </>
-  );
-};
+import { Table, Space, Button, Image } from 'antd';
 
 class GetStaff extends Component {
   constructor(...args) {
@@ -61,6 +27,13 @@ class GetStaff extends Component {
         dataIndex: 'information',
       },
       {
+        title: '头像',
+        dataIndex: 'staffPicUrl',
+        render: (text, record) => {
+          return <Image width={200} src={record.staffPicUrl} />;
+        },
+      },
+      {
         title: '操作',
         key: 'action',
         render: (text, record, index) => {
@@ -71,7 +44,7 @@ class GetStaff extends Component {
                 shape="round"
                 onClick={() => {
                   history.push({
-                    pathname: '/innerStaff/changeStaff',
+                    pathname: '/sample/manage',
                     query: {
                       valueIndex: index,
                       value: this.props.staff.staffList[index],
@@ -81,7 +54,6 @@ class GetStaff extends Component {
               >
                 查看详情
               </Button>
-              <Delemodel valueIndex={index} {...this.props} />
             </Space>
           );
         },

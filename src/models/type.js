@@ -1,6 +1,5 @@
 import { getAllType, deleType as dele, addType as add } from '@/services/type';
 import { message } from 'antd';
-import { history } from 'umi';
 
 const TypeModel = {
   namespace: 'type',
@@ -36,37 +35,68 @@ const TypeModel = {
       }
     },
 
-    *deleType({ payload }, { call }) {
+    *deleType({ payload }, { call, put }) {
       const { type, value } = payload;
       const response = yield call(dele, { type, value });
       const { status } = response;
       if (status === 'ok') {
-        message.success('删除成功！');
-        setTimeout(() => {
-          history.go(0);
-        }, 1000);
+        const res = yield call(getAllType, { type });
+        const { data = [], status: sign } = res;
+        if (sign === 'ok') {
+          data.filter((val, index) => {
+            const arrData = val;
+            const key = index + 1;
+            arrData.key = key.toString();
+            return arrData;
+          });
+          if (type === 'picture') {
+            yield put({
+              type: 'savePictureType',
+              payload: data,
+            });
+          } else if (type === 'video') {
+            yield put({
+              type: 'saveVideoType',
+              payload: data,
+            });
+          }
+          message.success('删除成功');
+        } else {
+          message.error('获取信息错误，请刷新重试');
+        }
       } else {
         message.error('删除数据错误，请重试！');
       }
     },
 
-    *addType({ payload }, { call }) {
+    *addType({ payload }, { call, put }) {
       const { type, typeName, typeId } = payload;
       const response = yield call(add, { type, typeName, typeId });
       const { status } = response;
       if (status === 'ok') {
-        if (type === 'picture') {
-          message.success('添加类型成功！');
-          setTimeout(() => {
-            history.go(0);
-          }, 1000);
-        } else if (type === 'video') {
-          message.success('添加类型成功！');
-          setTimeout(() => {
-            history.go(0);
-          }, 1000);
+        const res = yield call(getAllType, { type });
+        const { data = [], status: sign } = res;
+        if (sign === 'ok') {
+          data.filter((val, index) => {
+            const arrData = val;
+            const key = index + 1;
+            arrData.key = key.toString();
+            return arrData;
+          });
+          if (type === 'picture') {
+            yield put({
+              type: 'savePictureType',
+              payload: data,
+            });
+          } else if (type === 'video') {
+            yield put({
+              type: 'saveVideoType',
+              payload: data,
+            });
+          }
+          message.success('添加成功');
         } else {
-          message.error('添加数据失败，请重试！');
+          message.error('获取信息错误，请刷新重试');
         }
       } else {
         message.error('添加数据失败，请重试！');

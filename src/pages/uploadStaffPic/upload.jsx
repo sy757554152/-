@@ -81,7 +81,10 @@ class UploadStaffPic extends Component {
     });
     dispatch({
       type: 'staff/addStaffPic',
-      payload: fs,
+      payload: {
+        fs,
+        staffId,
+      },
     });
   }
 
@@ -116,7 +119,10 @@ class UploadStaffPic extends Component {
 
   render() {
     const { fileList, loading, previewVisible, previewImage, previewTitle } = this.state;
-    const { staff = {} } = this.props;
+    const { staff = {}, history } = this.props;
+    const { location = {} } = history;
+    const { query = {} } = location;
+    const { value } = query;
     const { staffList = [] } = staff;
     const uploadButton = (
       <div>
@@ -153,7 +159,13 @@ class UploadStaffPic extends Component {
     return (
       <PageContainer>
         <Spin spinning={loading}>
-          <Form {...formItemLayout} name="register" onFinish={this.onFinish} scrollToFirstError>
+          <Form
+            {...formItemLayout}
+            initialValues={{ staffId: value }}
+            name="register"
+            onFinish={this.onFinish}
+            scrollToFirstError
+          >
             <Form.Item
               name="staffId"
               label="员工姓名"

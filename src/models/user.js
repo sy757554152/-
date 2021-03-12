@@ -42,7 +42,6 @@ const UserModel = {
     },
 
     *addUser({ payload }, { call }) {
-      // console.log(payload)
       const { id } = payload;
       const res = yield call(searchManager, id);
       const { status } = res;
@@ -73,6 +72,11 @@ const UserModel = {
           const value = val;
           const key = index + 1;
           value.key = key.toString();
+          if (val.type === 'admin') {
+            value.typeName = '管理员';
+          } else {
+            value.typeName = '员工';
+          }
           return value;
         });
         yield put({

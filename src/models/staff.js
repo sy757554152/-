@@ -5,6 +5,8 @@ import {
   addStaffPic as addPic,
   getStaffPic as getPic,
   deleStaffPic as delePic,
+  changeStaff as change,
+  changeStaffPic as changePic,
 } from '@/services/staff';
 import { message } from 'antd';
 import { history } from 'umi';
@@ -30,12 +32,20 @@ const StaffModel = {
     },
 
     *addStaffPic({ payload }, { call }) {
-      const response = yield call(addPic, payload);
+      const { fs, staffId } = payload;
+      const response = yield call(addPic, fs);
       const { status } = response;
       if (status === 'ok') {
         message.success('录入成功！');
         setTimeout(() => {
-          history.push('/uploadStaffPic/manage');
+          history.push({
+            pathname: '/uploadStaffPic/manage',
+            query: {
+              value: {
+                staffId,
+              },
+            },
+          });
         }, 1000);
       } else {
         message.error('录入数据错误，请重试！');
@@ -87,8 +97,8 @@ const StaffModel = {
       }
     },
 
-    *getStaffPic(_, { call, put }) {
-      const response = yield call(getPic);
+    *getStaffPic({ payload }, { call, put }) {
+      const response = yield call(getPic, payload);
       const { status, data } = response;
       if (status === 'ok') {
         data.filter((val, index) => {
@@ -108,10 +118,11 @@ const StaffModel = {
 
     *deleStaffPic({ payload }, { call, put }) {
       const { value = {} } = payload;
+      const { staffId } = value;
       const response = yield call(delePic, value);
       const { status } = response;
       if (status === 'ok') {
-        const res = yield call(getPic);
+        const res = yield call(getPic, { staffId });
         const { data = [], status: sign } = res;
         if (sign === 'ok') {
           data.filter((val, index) => {
@@ -130,6 +141,49 @@ const StaffModel = {
         }
       } else {
         message.error('删除错误，请重试');
+      }
+    },
+
+    *changeStaff({ payload }, { call }) {
+      const response = yield call(change, payload);
+      const { status } = response;
+      if (status === 'ok') {
+        message.success('修改成功！');
+        setTimeout(() => {
+          history.push('/innerStaff/getStaff');
+        }, 1000);
+      } else {
+        message.error('修改数据错误，请重试！');
+      }
+    },
+
+    *changeStaffPic({ payload, callback }, { call, put }) {
+      const { fs, staffId } = payload;
+      const response = yield call(changePic, fs);
+      const { status } = response;
+      if (status === 'ok') {
+        const res = yield call(getPic, { staffId });
+        const { data = [], status: sign } = res;
+        if (sign === 'ok') {
+          data.filter((val, index) => {
+            const arrData = val;
+            const key = index + 1;
+            arrData.key = key.toString();
+            return arrData;
+          });
+          yield put({
+            type: 'saveStaffPicList',
+            payload: data,
+          });
+          message.success('修改成功！');
+          callback(true);
+        } else {
+          message.error('获取信息错误，请刷新重试');
+          callback(false);
+        }
+      } else {
+        message.error('修改数据错误，请刷新重试！');
+        callback(false);
       }
     },
   },
