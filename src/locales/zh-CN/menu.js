@@ -28,6 +28,8 @@ export default {
   'menu.video.upload': '视频上传',
   'menu.video.manage': '视频管理',
   'menu.innerStaff': '员工管理',
+  'menu.innerStaff.addStaffType': '添加员工类型',
+  'menu.innerStaff.showStaffType': '员工类型列表',
   'menu.innerStaff.addStaff': '员工录入',
   'menu.innerStaff.getStaff': '员工信息',
   'menu.innerStaff.changeStaff': '修改员工信息',

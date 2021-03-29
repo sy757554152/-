@@ -54,3 +54,23 @@ export async function changeStaffPic(params) {
     data: params,
   });
 }
+
+export async function addStaffType(params) {
+  return request('/api/staff/addStaffType', {
+    method: 'POST',
+    data: params,
+  });
+}
+
+export async function getStaffType() {
+  return request('/api/staff/getStaffType', {
+    method: 'GET',
+  });
+}
+
+export async function deleStaffType(params) {
+  return request('/api/staff/deleStaffType', {
+    method: 'POST',
+    data: params,
+  });
+}

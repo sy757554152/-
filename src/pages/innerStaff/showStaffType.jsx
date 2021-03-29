@@ -12,11 +12,11 @@ const Delemodel = (props) => {
 
   const handleOk = () => {
     const { dispatch, staff = {}, valueIndex } = props;
-    const { staffList = [] } = staff;
-    const value = staffList[valueIndex];
+    const { typeList = [] } = staff;
+    const value = typeList[valueIndex];
     dispatch({
-      type: 'staff/deleStaff',
-      payload: { value },
+      type: 'staff/deleStaffType',
+      payload: { ...value },
     });
     setIsModalVisible(false);
   };
@@ -31,38 +31,27 @@ const Delemodel = (props) => {
         删除
       </Button>
       <Modal title="删除提示" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
-        <p>是否删除该员工信息？</p>
+        <p>是否删除该员工类型？</p>
       </Modal>
     </>
   );
 };
 
-class GetStaff extends Component {
+class PhotoType extends Component {
   constructor(...args) {
     super(...args);
-
-    this.getAllStaff = this.getAllStaff.bind(this);
+    this.getStaffType = this.getStaffType.bind(this);
 
     this.columns = [
       {
-        title: '序号',
+        title: '员工类型序号',
         dataIndex: 'key',
+        key: 'key',
       },
       {
-        title: '员工姓名',
-        dataIndex: 'staffName',
-      },
-      {
-        title: '员工类型',
+        title: '类型名称',
         dataIndex: 'staffTypeName',
-      },
-      {
-        title: '性别',
-        dataIndex: 'sex',
-      },
-      {
-        title: '员工简介',
-        dataIndex: 'information',
+        key: 'staffTypeName',
       },
       {
         title: '操作',
@@ -70,21 +59,6 @@ class GetStaff extends Component {
         render: (text, record, index) => {
           return (
             <Space size="middle">
-              <Button
-                type="primary"
-                shape="round"
-                onClick={() => {
-                  history.push({
-                    pathname: '/innerStaff/changeStaff',
-                    query: {
-                      valueIndex: index,
-                      value: this.props.staff.staffList[index],
-                    },
-                  });
-                }}
-              >
-                查看详情
-              </Button>
               <Delemodel valueIndex={index} {...this.props} />
             </Space>
           );
@@ -96,29 +70,40 @@ class GetStaff extends Component {
   }
 
   componentDidMount() {
-    this.getAllStaff();
+    this.getStaffType();
   }
 
-  getAllStaff() {
+  getStaffType() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'staff/getStaff',
+      type: 'staff/getStaffType',
     });
   }
 
   render() {
-    const { staff } = this.props;
-    const { staffList } = staff;
+    const { staff = {} } = this.props;
+    const { typeList = [] } = staff;
     return (
       <PageContainer>
-        <Table columns={this.columns} dataSource={staffList} />
+        <Button
+          type="primary"
+          shape="round"
+          style={{ marginBottom: 20 }}
+          onClick={() => {
+            history.push('/innerStaff/addStaffType');
+          }}
+        >
+          添加员工类型
+        </Button>
+        <Table columns={this.columns} dataSource={typeList} />
       </PageContainer>
     );
   }
 }
 
-export default connect(({ login, loading, staff }) => ({
+export default connect(({ login, loading, user, staff }) => ({
   userLogin: login,
   loading,
+  user,
   staff,
-}))(GetStaff);
+}))(PhotoType);

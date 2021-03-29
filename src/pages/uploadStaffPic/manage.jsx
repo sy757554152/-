@@ -1,7 +1,7 @@
 import React, { Component, useState } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
 import { connect, history } from 'umi';
-import { Table, Space, Button, Modal, Image } from 'antd';
+import { Table, Space, Button, Modal, Image, message } from 'antd';
 import UploadPic from '@/components/UploadPic/index';
 
 function getBase64(img, callback) {
@@ -86,8 +86,7 @@ class ManageStaffPic extends Component {
         fs.append('isPicChange', isPicChange);
         if (isPicChange) {
           const [file] = fileList;
-          const { originFileObj } = file;
-          fs.append('file', originFileObj);
+          fs.append('file', file);
         }
         dispatch({
           type: 'staff/changeStaffPic',
@@ -110,27 +109,26 @@ class ManageStaffPic extends Component {
         });
       };
 
-      const handleChange = (info) => {
-        if (info.file.status === 'uploading') {
-          this.setState({ uploading: true });
-          return;
+      const beforeUpload = (file) => {
+        const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+        if (!isJpgOrPng) {
+          message.error('You can only upload JPG/PNG file!');
+          return false;
         }
-        if (info.file.status === 'done') {
-          // Get this url from response in real world.
-          getBase64(info.file.originFileObj, (imageUrl) => {
-            this.setState({
-              fileList: [info.file],
-              imageUrl,
-              uploading: false,
-            });
+        getBase64(file, (imageUrl) => {
+          this.setState({
+            fileList: [file],
+            imageUrl,
+            uploading: false,
           });
-        }
+        });
+        return false;
       };
 
       const params = {
         value: this.state.imageUrl,
         uploading: this.state.uploading,
-        handleChange,
+        beforeUpload,
       };
 
       const handleCancel = () => {

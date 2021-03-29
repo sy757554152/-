@@ -18,11 +18,11 @@ const Model = {
         type: 'changeLoginStatus',
         payload: response,
       }); // Login successfully
-      const { userdata } = response;
-      const { id, name } = userdata;
-      setToken('token', id);
-      setToken('userName', name);
       if (response.status === 'ok') {
+        const { userdata } = response;
+        const { id, name } = userdata;
+        setToken('token', id);
+        setToken('userName', name);
         const urlParams = new URL(window.location.href);
         const params = getPageQuery();
         message.success('🎉 🎉 🎉  登录成功！');

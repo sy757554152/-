@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Upload, message, Spin } from 'antd';
+import { Upload, Spin } from 'antd';
 
 class UploadPic extends Component {
   constructor(...args) {
@@ -8,26 +8,15 @@ class UploadPic extends Component {
   }
 
   render() {
-    const { value, handleChange, uploading } = this.props;
-    const UploadProps = {
-      beforeUpload: (file) => {
-        const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
-        if (!isJpgOrPng) {
-          message.error('You can only upload JPG/PNG file!');
-          return false;
-        }
-        return true;
-      },
-    };
+    const { value, uploading, beforeUpload } = this.props;
     return (
       <Spin spinning={uploading}>
         <Upload
-          {...UploadProps}
+          beforeUpload={beforeUpload}
           name="avatar"
           listType="picture-card"
           className="avatar-uploader"
           showUploadList={false}
-          onChange={handleChange}
         >
           <img src={value} alt="摄影师图片" style={{ width: '100%' }} />
         </Upload>

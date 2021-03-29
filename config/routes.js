@@ -96,6 +96,19 @@ export default [
             authority: ['admin'],
             routes: [
               {
+                path: '/innerStaff/addStaffType',
+                name: 'addStaffType',
+                component: './innerStaff/addStaffType',
+                authority: ['admin'],
+                hideInMenu: true,
+              },
+              {
+                path: '/innerStaff/showStaffType',
+                name: 'showStaffType',
+                component: './innerStaff/showStaffType',
+                authority: ['admin'],
+              },
+              {
                 path: '/innerStaff/addStaff',
                 name: 'addStaff',
                 component: './innerStaff/addStaff',

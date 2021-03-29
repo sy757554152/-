@@ -7,6 +7,9 @@ import {
   deleStaffPic as delePic,
   changeStaff as change,
   changeStaffPic as changePic,
+  addStaffType as addType,
+  getStaffType as getType,
+  deleStaffType as deleType,
 } from '@/services/staff';
 import { message } from 'antd';
 import { history } from 'umi';
@@ -16,6 +19,7 @@ const StaffModel = {
   state: {
     staffList: [],
     staffPicList: [],
+    typeList: [],
   },
   effects: {
     *addStaff({ payload }, { call }) {
@@ -25,6 +29,21 @@ const StaffModel = {
         message.success('录入成功！');
         setTimeout(() => {
           history.push('/innerStaff/getStaff');
+        }, 1000);
+      } else {
+        message.error('录入数据错误，请重试！');
+      }
+    },
+
+    *addStaffType({ payload }, { call }) {
+      const response = yield call(addType, payload);
+      const { status } = response;
+      if (status === 'ok') {
+        message.success('添加成功！');
+        setTimeout(() => {
+          history.push({
+            pathname: '/innerStaff/showStaffType',
+          });
         }, 1000);
       } else {
         message.error('录入数据错误，请重试！');
@@ -70,6 +89,26 @@ const StaffModel = {
         message.error('获取数据错误，请刷新重试！');
       }
     },
+
+    *getStaffType(_, { call, put }) {
+      const response = yield call(getType);
+      const { status, data } = response;
+      if (status === 'ok') {
+        data.filter((val, index) => {
+          const arrData = val;
+          const key = index + 1;
+          arrData.key = key.toString();
+          return arrData;
+        });
+        yield put({
+          type: 'saveTypeList',
+          payload: data,
+        });
+      } else {
+        message.error('获取数据错误，请刷新重试！');
+      }
+    },
+
     *deleStaff({ payload }, { call, put }) {
       const { value = {} } = payload;
       const response = yield call(dele, value);
@@ -86,6 +125,31 @@ const StaffModel = {
           });
           yield put({
             type: 'saveStaffList',
+            payload: data,
+          });
+          message.success('删除成功！');
+        } else {
+          message.error('获取信息错误，请刷新重试');
+        }
+      } else {
+        message.error('删除错误，请重试');
+      }
+    },
+    *deleStaffType({ payload }, { call, put }) {
+      const response = yield call(deleType, payload);
+      const { status } = response;
+      if (status === 'ok') {
+        const res = yield call(getType);
+        const { data = [], status: sign } = res;
+        if (sign === 'ok') {
+          data.filter((val, index) => {
+            const arrData = val;
+            const key = index + 1;
+            arrData.key = key.toString();
+            return arrData;
+          });
+          yield put({
+            type: 'saveTypeList',
             payload: data,
           });
           message.success('删除成功！');
@@ -194,6 +258,9 @@ const StaffModel = {
     },
     saveStaffPicList(state, action) {
       return { ...state, staffPicList: action.payload || [] };
+    },
+    saveTypeList(state, action) {
+      return { ...state, typeList: action.payload || [] };
     },
   },
 };

@@ -46,6 +46,7 @@ class InnerStaff extends Component {
     super(...args);
 
     this.onFinish = this.onFinish.bind(this);
+    this.getStaffType = this.getStaffType.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
     this.handlePreview = this.handlePreview.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -58,11 +59,15 @@ class InnerStaff extends Component {
     };
   }
 
+  componentDidMount() {
+    this.getStaffType();
+  }
+
   onFinish(values) {
     const { fileList } = this.state;
     const { dispatch } = this.props;
     const staffId = moment().format('YYYYMMDDHHmmss');
-    const { name, sex, information } = values;
+    const { name, sex, information, staffTid } = values;
     const [file] = fileList;
     const { originFileObj } = file;
     const fs = new FormData();
@@ -73,10 +78,18 @@ class InnerStaff extends Component {
     fs.append('staffName', name);
     fs.append('sex', sex);
     fs.append('information', information);
+    fs.append('staffTid', staffTid);
     fs.append('file', originFileObj);
     dispatch({
       type: 'staff/addStaff',
       payload: fs,
+    });
+  }
+
+  getStaffType() {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'staff/getStaffType',
     });
   }
 
@@ -104,6 +117,8 @@ class InnerStaff extends Component {
 
   render() {
     const { fileList, uploading, previewVisible, previewImage, previewTitle } = this.state;
+    const { staff = {} } = this.props;
+    const { typeList } = staff;
     const uploadButton = (
       <div>
         <PlusOutlined />
@@ -144,6 +159,20 @@ class InnerStaff extends Component {
               rules={[{ required: true, message: '请输入姓名', whitespace: true }]}
             >
               <Input />
+            </Form.Item>
+
+            <Form.Item
+              name="staffTid"
+              label="员工类型"
+              rules={[{ required: true, message: '请选择员工类型' }]}
+            >
+              <Select>
+                {typeList.map((item, idx) => (
+                  <Option key={idx} value={item.staffTypeId}>
+                    {item.staffTypeName}
+                  </Option>
+                ))}
+              </Select>
             </Form.Item>
 
             <Form.Item name="sex" label="性别" rules={[{ required: true, message: '请选择性别' }]}>

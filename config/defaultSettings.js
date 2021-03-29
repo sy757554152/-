@@ -7,7 +7,7 @@ const proSettings = {
   fixedHeader: false,
   fixSiderbar: true,
   colorWeak: false,
-  title: '麦琪摄影',
+  title: '麦琪视觉',
   pwa: false,
   iconfontUrl: '',
 };

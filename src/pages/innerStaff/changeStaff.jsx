@@ -41,11 +41,15 @@ class ChangeStaff extends Component {
     super(...args);
 
     this.onFinish = this.onFinish.bind(this);
-    this.handleChange = this.handleChange.bind(this);
+    this.getStaffType = this.getStaffType.bind(this);
     this.state = {
       fileList: [],
       uploading: false,
     };
+  }
+
+  componentDidMount() {
+    this.getStaffType();
   }
 
   onFinish(values) {
@@ -57,7 +61,7 @@ class ChangeStaff extends Component {
     const { value = {} } = query;
     const { staffId, staffPicUrl } = value;
 
-    const { staffName, sex, information } = values;
+    const { staffName, sex, information, staffTid } = values;
     let isPicChange = false;
     if (fileList.length !== 0) {
       isPicChange = true;
@@ -71,11 +75,11 @@ class ChangeStaff extends Component {
     fs.append('sex', sex);
     fs.append('information', information);
     fs.append('staffPicUrl', staffPicUrl);
+    fs.append('staffTid', staffTid);
     fs.append('isPicChange', isPicChange);
     if (isPicChange) {
       const [file] = fileList;
-      const { originFileObj } = file;
-      fs.append('file', originFileObj);
+      fs.append('file', file);
     }
     dispatch({
       type: 'staff/changeStaff',
@@ -83,25 +87,16 @@ class ChangeStaff extends Component {
     });
   }
 
-  handleChange(info) {
-    if (info.file.status === 'uploading') {
-      this.setState({ uploading: true });
-      return;
-    }
-    if (info.file.status === 'done') {
-      // Get this url from response in real world.
-      getBase64(info.file.originFileObj, (imageUrl) =>
-        this.setState({
-          fileList: [info.file],
-          imageUrl,
-          uploading: false,
-        }),
-      );
-    }
+  getStaffType() {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'staff/getStaffType',
+    });
   }
 
   render() {
-    const { history = {} } = this.props;
+    const { history = {}, staff = {} } = this.props;
+    const { typeList } = staff;
     const { location = {} } = history;
     const { query = {} } = location;
     const { value = {} } = query;
@@ -114,7 +109,14 @@ class ChangeStaff extends Component {
           message.error('You can only upload JPG/PNG file!');
           return false;
         }
-        return true;
+        getBase64(file, (imgValue) =>
+          this.setState({
+            fileList: [file],
+            imageUrl: imgValue,
+            uploading: false,
+          }),
+        );
+        return false;
       },
     };
     return (
@@ -133,6 +135,20 @@ class ChangeStaff extends Component {
               rules={[{ required: true, message: '请输入姓名', whitespace: true }]}
             >
               <Input />
+            </Form.Item>
+
+            <Form.Item
+              name="staffTid"
+              label="员工类型"
+              rules={[{ required: true, message: '请选择员工类型' }]}
+            >
+              <Select>
+                {typeList.map((item, idx) => (
+                  <Option key={idx} value={item.staffTypeId}>
+                    {item.staffTypeName}
+                  </Option>
+                ))}
+              </Select>
             </Form.Item>
 
             <Form.Item name="sex" label="性别" rules={[{ required: true, message: '请选择性别' }]}>
@@ -161,7 +177,6 @@ class ChangeStaff extends Component {
                 listType="picture-card"
                 className="avatar-uploader"
                 showUploadList={false}
-                onChange={this.handleChange}
               >
                 {imageUrl ? (
                   <img src={imageUrl} alt="员工头像" style={{ width: '100%' }} />
